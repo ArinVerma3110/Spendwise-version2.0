@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>SpendWise — Add Expense</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+    <header class="site-header">
+    <h1 class="site-title">SpendWise</h1>
+  </header>
+
+  <!-- Top nav: welcome + logout -->
+  <nav class="top-nav" aria-label="User navigation">
+    <div class="auth-links">
+      {% if logged_in %}
+        <span class="user-email" aria-hidden="true">welcome, {{ user_email }}</span>
+        &nbsp;|&nbsp;
+        <a href="/logout" class="auth-link">logout</a>
+      {% else %}
+        <a href="/login" class="auth-link">login</a> / <a href="/signup" class="auth-link">signup</a>
+      {% endif %}
+    </div>
+  </nav>
+
+  <main class="container" id="main" role="main">
+    <h1 class="webtitle">Add Expense</h1>
+
+    <!--
+      Form submits to /add_expense (server-side fallback). JS will intercept to
+      provide inline feedback and avoid page reloads.
+    -->
+    <form id="expenseForm" class="expense-form" action="/add_expense" method="POST" novalidate>
+      <label for="date">Date</label>
+      <input id="date" name="date" type="date" required aria-required="true" />
+
+      <label for="category">Category</label>
+      <select id="category" name="category" required aria-required="true">
+        <option value="food">food</option>
+        <option value="travel">travel</option>
+        <option value="entertainment">entertainment</option>
+        <option value="healthcare">healthcare</option>
+      </select>
+
+      <label for="amount">Amount (₹)</label>
+      <input id="amount" name="amount" type="number" min="0" max="1000" step="0.01" required aria-required="true" />
+
+      <!-- buttons row -->
+      <div class="button-row" style="margin-top:12px;">
+        <button id="addBtn" type="submit" aria-label="Add expense">Add Expense</button>
+        <a class="view-report-btn" href="/report" role="button" aria-label="View report">View Report</a>
+      </div>
+    </form>
+  </main>
+
+  <!-- toast container for screen readers -->
+  <div id="toast-area" aria-live="polite" style="position:fixed; left:-9999px; width:1px; height:1px; overflow:hidden;"></div>
+
+  <script>
+    (function () {
+      // small helper: accessible toast + visual
+      function showToast(message, kind = 'success') {
+        // accessible announcement for screen readers
+        const toastArea = document.getElementById('toast-area');
+        if (toastArea) {
+          toastArea.textContent = message;
+          // move focus briefly (do not steal from users); we keep it simple by updating aria-live
+        }
+
+        // Remove any existing visual toast
+        const existing = document.getElementById('app-toast');
+        if (existing) existing.remove();
+
+        const toast = document.createElement('div');
+        toast.id = 'app-toast';
+        toast.className = 'app-toast ' + kind;
+        toast.setAttribute('role', 'status');
+        toast.textContent = message;
+        document.body.appendChild(toast);
+
+        // schedule fade + removal
+        setTimeout(() => { toast.style.opacity = '0'; }, 1800);
+        setTimeout(() => { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 2300);
+      }
+
+      // Prevent double submit and add client-side validation & UX
+      const form = document.getElementById('expenseForm');
+      const addBtn = document.getElementById('addBtn');
+
+      if (!form) return;
+
+      form.addEventListener('submit', async function (e) {
+        // If browser invalidates fields, let it show native UI
+        if (!form.checkValidity()) {
+          // Let browser show validation messages
+          return;
+        }
+
+        e.preventDefault();
+
+        // basic client-side checks (mirrors server rules)
+        const amountField = form.querySelector('[name="amount"]');
+        const amountValue = parseFloat(amountField && amountField.value ? amountField.value : '0');
+        if (isNaN(amountValue) || amountValue < 0) {
+          showToast('Please enter a valid amount', 'error');
+          return;
+        }
+        if (amountValue > 1000) {
+          showToast('Amount exceeds ₹1000 limit', 'error');
+          return;
+        }
+
+        // disable submit to avoid duplicates
+        addBtn.disabled = true;
+        addBtn.setAttribute('aria-disabled', 'true');
+
+        const fd = new FormData(form);
+
+        try {
+          const res = await fetch('/add_expense', {
+            method: 'POST',
+            body: fd,
+            credentials: 'same-origin'
+          });
+
+          if (!res.ok) {
+            const text = await res.text().catch(() => 'Error adding expense');
+            showToast(text || 'Error adding expense', 'error');
+            addBtn.disabled = false;
+            addBtn.removeAttribute('aria-disabled');
+            return;
+          }
+
+          // success — keep page, give feedback and reset only the necessary fields
+          showToast('Expense added successfully', 'success');
+
+          // Reset amount and category, keep date for convenience
+          if (amountField) amountField.value = '';
+          const category = form.querySelector('[name="category"]');
+          if (category) category.selectedIndex = 0;
+
+          // re-enable button
+          addBtn.disabled = false;
+          addBtn.removeAttribute('aria-disabled');
+
+        } catch (err) {
+          console.error('Add expense error', err);
+          showToast('Network error — could not add expense', 'error');
+          addBtn.disabled = false;
+          addBtn.removeAttribute('aria-disabled');
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Login - SpendWise</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <h1 class="site-title">SpendWise</h1>
+  </header>
+  
+  <main class="container">
+    <h1 class="webtitle">Login</h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul class="flashes">
+          {% for category, msg in messages %}
+            <li class="flash {{ category }}">{{ msg }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <form action="/login" method="post" class="auth-form">
+      <label for="email">Email</label>
+      <input id="email" type="email" name="email" required>
+
+      <label for="password">Password</label>
+      <input id="password" type="password" name="password" required>
+
+      <button type="submit">Login</button>
+    </form>
+
+    <p style="text-align:center; margin-top:12px;">New here? <a href="/signup">Create an account</a></p>
+  </main>
+</body>
+</html>

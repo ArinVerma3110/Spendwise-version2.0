@@ -1,0 +1,662 @@
+body {
+    font-family:Arial, sans-serif;
+    background-color: #141414;
+    /* background-image:url(spendwise_bg.jpg); */
+    margin: 0;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Top-right auth area */
+.top-nav {
+  position: relative;
+  width: 100%;
+  height: 0;
+}
+
+/* Reusable auth links block */
+.auth-links {
+  position: absolute;
+  top: 12px;
+  right: 20px;
+  font-weight: 800;
+  color: #FAF6E9;
+  text-transform: lowercase;
+  font-size: 14px;
+  z-index: 1000;
+  text-align: right;
+}
+
+.auth-links .auth-link {
+  color: inherit;
+  text-decoration: none;
+  margin: 0 4px;
+}
+
+.auth-links .auth-link:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.user-email {
+  color: #FAF6E9;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+#icondate{
+    color: #007bff;
+}
+#iconamount {
+    color: #28a745;
+}
+#iconcategory {
+    color: teal;
+}
+
+h1{
+    color: #FAF6E9;
+    font-weight: 800;
+    font-size: 40px;
+    text-align: center;
+    margin-bottom: 40px;
+    text-shadow: 3px 3px 10px rgba(250, 246, 233, 0.5);
+    background-color: black;
+    border: black;
+    border-radius: 8px;
+}
+
+.webtitle {
+    color: #FAF6E9;
+    font-weight: 800;
+    font-size: 40px;
+    text-align: center;
+    margin-bottom: 40px;
+    text-shadow: 3px 3px 10px rgba(250, 246, 233, 0.5);
+    background-color: black;
+    border: black;
+    border-radius: 8px;
+   
+}
+
+h2 {
+    color: #FAF6E9;
+    font-weight: 800;
+    font-size: 30px;
+    text-align: center;
+    margin-bottom: 40px;
+    text-shadow: 3px 3px 10px rgba(250, 246, 233, 0.5);
+    
+}
+
+.headh2 {
+    background-color: black;
+    border: black;
+    border-radius: 8px;
+}
+h3 {
+    color: #FAF6E9;
+    font-weight: 800;
+    font-size: 25px;
+    text-align: center;
+    margin-bottom: 40px;
+    text-shadow: 3px 3px 10px rgba(250, 246, 233, 0.5);
+    
+}
+
+form {
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #3e3e3e ;
+    width: 300px;
+    margin: auto;
+    text-align: left;
+    background-color:#3e3e3e;
+    
+}
+
+input,select {
+    display: block;
+    width: 96%;
+    margin: 10px 0;
+    padding: 10px;
+    font-size: 14px;
+    box-sizing: border-box;
+    background-color:  #ffffff;
+    border-radius: 5px;
+    color:black;
+    box-shadow: 3px 3px 5px #141414;
+    
+   
+}
+
+button {
+    display: block;
+    width: 96%;
+    margin: 10px 0;
+    box-sizing: border-box;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 800;
+    font-size: 18px;
+    height: 42px;
+
+}
+
+button:hover {
+    background-color: #218838;
+}
+
+
+/* View Report Button */
+.view-report-btn {
+    
+    background-color: #007bff;
+    font-weight: 800;
+    display: block;
+    width: 96%;
+    margin: 10px 0;
+    box-sizing: border-box;
+    font-size: 18px;
+    
+    
+}
+
+
+.view-report-btn:hover {
+    background-color: #0056b3;
+}
+
+
+a {
+    display: block;
+    width: 96%;
+    margin: 10px 0;
+    padding: 10px;
+    padding: bottom 10px;
+    font-size: 14px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+    text-align: center;
+    
+}
+
+a:hover {
+    text-decoration: none;
+    background-color: #0056b3;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+    border-color: #3e3e3e;
+    background-color: #3e3e3e;
+    box-shadow: 5px 5px 5px #3e3e3e;
+}
+
+#predictionGraphs {
+    margin-top: 20px;
+}
+
+label {
+    font-weight: 800;
+    font-size: larger;
+    color: white;
+    text-shadow: 3px 3px 5px #141414;
+}
+
+.reportback {
+    display: block;
+    width: 96%;
+    margin: 10px 0;
+    padding: 10px;
+    padding: bottom 10px;
+    font-size: 14px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+    text-decoration: none;
+    text-align: center;
+}
+
+.reportback:hover {
+    background-color: #0056b3;
+}
+
+
+/*login/signup form*/
+.auth-form {
+  max-width: 320px;
+  margin: 30px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.auth-form input {
+  padding: 8px;
+  border-radius: 8px;
+  border: none;
+  font-size: 14px;
+}
+
+.auth-form button {
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background-color: #FAF6E9;
+  color: #1B1A55;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.auth-form button:hover {
+  opacity: 0.9;
+}
+
+
+
+/* Additional styles (paste these into your existing style.css) */
+
+/* page wrapper used by the templates */
+.container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 0 18px;
+  color: #FAF6E9;
+  box-sizing: border-box;
+}
+
+/* expense form (template-specific) */
+.expense-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+/* small utility buttons/links used across pages */
+.view-report-btn {
+  display: inline-block;
+  text-align: center;
+  text-decoration: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  background: #007bff;
+  color: #fff;
+  font-weight: 800;
+}
+
+/* flash/notification messages (used in auth pages) */
+.flashes { list-style: none; padding: 0; margin: 12px 0; max-width: 600px; margin-left: auto; margin-right: auto; }
+.flash {
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-weight: 700;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+.flash.success { background: #2e7d32; color: #fff; }
+.flash.error   { background: #c82333; color: #fff; }
+.flash.info    { background: #0d6efd; color: #fff; }
+
+/* table used on dashboard */
+.expenses-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  color: #FAF6E9;
+}
+.expenses-table th, .expenses-table td {
+  padding: 10px;
+  border-bottom: 1px solid rgba(250,246,233,0.06);
+  text-align: left;
+  font-weight: 600;
+}
+
+/* small block wrapper for each category graph on report page */
+.category-block {
+  margin-bottom: 22px;
+  padding: 12px;
+  background: rgba(62,62,62,0.12);
+  border-radius: 8px;
+}
+
+/* header row used on dashboard pages (welcome + logout) */
+.top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  max-width: 900px;
+  margin: 0 auto 20px;
+  box-sizing: border-box;
+}
+.auth-logout {
+  color: #FAF6E9;
+  text-decoration: none;
+  font-weight: 800;
+}
+.auth-logout:hover { text-decoration: underline; }
+
+/* prediction results container */
+#predictions, #predictionGraphs {
+  max-width: 900px;
+  margin: 18px auto;
+  text-align: left;
+}
+
+/* small responsive adjustments */
+@media (max-width: 520px) {
+  .container { padding: 0 12px; }
+  .auth-links { right: 10px; top: 8px; font-size: 13px; }
+  .webtitle, h1 { font-size: 28px; }
+  form, .auth-form, .expense-form { width: 100%; }
+  .expenses-table th, .expenses-table td { padding: 8px; font-size: 14px; }
+}
+
+
+/* --- Button & form cleanup for index page --- */
+
+/* ensure expense form uses clean layout */
+.expense-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 18px;
+  background: rgba(62,62,62,0.06);
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+
+/* Add Expense button (fixed visual style) */
+#addBtn {
+  background-color: #28a745;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 18px;
+  font-weight: 800;
+  font-size: 16px;
+  cursor: pointer;
+  width: 100%;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.35);
+}
+
+#addBtn:hover {
+  background-color: #218838;
+  transform: translateY(-1px);
+}
+
+/* View report button consistency */
+.view-report-btn {
+  background-color: #007bff;
+  color: #ffffff;
+  border-radius: 8px;
+  padding: 12px 18px;
+  font-weight: 800;
+  text-decoration: none;
+  display: inline-block;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.35);
+}
+
+.view-report-btn:hover {
+  background-color: #0056b3;
+  transform: translateY(-1px);
+}
+
+/* make the two buttons sit nicely on small screens */
+@media (max-width: 520px) {
+  .expense-form { padding: 12px; }
+  #addBtn, .view-report-btn { max-width: 100%; width: 100%; }
+}
+
+
+/* Temporary toast notifications for add-expense feedback */
+.app-toast {
+  position: fixed;
+  right: 18px;
+  bottom: 24px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+  transition: opacity 0.4s ease;
+  z-index: 2000;
+  opacity: 1;
+}
+.app-toast.success { background: #28a745; }
+.app-toast.error   { background: #c82333; }
+
+
+/* === Fix for Add Expense + View Report button styling ===
+   Place at the end of style.css to override earlier generic rules. === */
+
+/* container for the two buttons (if not present, rules still apply) */
+.expense-form .button-row,
+.expense-form .controls {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+  margin-top: 12px;
+  flex-wrap: wrap; /* allow stacking on small screens */
+}
+
+/* style both primary action and secondary link consistently */
+.expense-form #addBtn,
+.expense-form .view-report-btn {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;       /* prevent text wrap like "Add\nExpense" */
+  word-break: keep-all;
+  min-width: 140px;         /* give them a sensible minimum width */
+  padding: 12px 20px;       /* consistent padding */
+  height: 48px;             /* consistent height */
+  line-height: 1;           /* avoid extra vertical spacing */
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.35);
+  transform: none;          /* remove previous translate on hover baseline */
+  transition: transform 0.08s ease, box-shadow 0.12s ease, background-color 0.12s;
+  vertical-align: middle;
+  border: none;
+  cursor: pointer;
+}
+
+/* primary (add) */
+.expense-form #addBtn {
+  background-color: #28a745 !important;
+  color: #ffffff !important;
+}
+
+/* secondary (view report) - if it's an <a> it will still match */
+.expense-form .view-report-btn {
+  background-color: #007bff !important;
+  color: #ffffff !important;
+  display: inline-flex;     /* ensure anchors behave like buttons */
+}
+
+/* hover states */
+.expense-form #addBtn:hover { background-color: #218838 !important; transform: translateY(-2px); }
+.expense-form .view-report-btn:hover { background-color: #0056b3 !important; transform: translateY(-2px); }
+
+/* Make sure global 'button' width rules don't force full width here */
+.expense-form #addBtn,
+.expense-form .view-report-btn {
+  width: auto !important;
+  max-width: 260px;
+}
+
+/* Small screens: stack buttons full width */
+@media (max-width: 520px) {
+  .expense-form .button-row,
+  .expense-form .controls { gap: 10px; }
+  .expense-form #addBtn,
+  .expense-form .view-report-btn {
+    width: 100% !important;
+    max-width: none;
+    min-width: 0;
+  }
+}
+
+
+/* ---------- Responsive top-nav fixes ---------- */
+.top-nav {
+  position: sticky;      /* keeps nav at top while scrolling */
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: flex-end; /* move auth to right */
+  align-items: center;
+  padding: 8px 12px;
+  gap: 8px;
+  background: transparent; /* keep your dark theme */
+}
+
+/* container for email + links */
+.top-nav .auth-links {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 100%;
+}
+
+/* make the email responsive and non-breaking */
+.top-nav .user-email {
+  display: inline-block;
+  max-width: 220px;           /* desktop max */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;    /* "someone...@gmail.com" */
+  vertical-align: middle;
+  font-size: 0.95rem;
+  color: #fff;
+}
+
+/* ensure logout/login links are clickable and visible */
+.top-nav .auth-link {
+  display: inline-block;
+  margin-left: 6px;
+  text-decoration: none;
+  color: #9fd8ff;
+  font-weight: 600;
+}
+
+/* make the little dropdown-looking logout not overlap content */
+.top-nav .auth-link[role="button"] {
+  position: static; /* reset any absolute/overlay behavior from older rules */
+}
+
+/* ---------- Heading and layout fixes ---------- */
+.webtitle {
+  display: block;
+  font-size: 1.6rem;
+  text-align: center;
+  margin: 18px auto 10px;   /* create breathing room under sticky nav */
+  padding: 6px 14px;
+  color: #fff;
+  background: transparent;   /* remove any heavy bg that causes clipping */
+  border-radius: 6px;
+  text-shadow: none;         /* remove odd heavy shadows that make text look cut */
+}
+
+/* make sure main content doesn't get hidden behind sticky nav */
+main#main.container {
+  padding-top: 6px;
+  margin-top: 6px;
+}
+
+/* ---------- Mobile tweaks ---------- */
+@media (max-width: 480px) {
+  .top-nav .user-email {
+    max-width: 120px;        /* smaller on phones */
+    font-size: 0.9rem;
+  }
+
+  .webtitle {
+    font-size: 1.25rem;
+    margin-top: 12px;
+    padding: 8px 10px;
+  }
+
+  .button-row button, .view-report-btn {
+    font-size: 0.95rem;
+    padding: 10px 12px;
+  }
+}
+
+
+.top-nav .user-email {
+  display: inline-block;
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  font-size: 0.95rem;
+  color: #fff;
+  cursor: default;
+  position: relative;
+}
+
+/* Show full email on hover */
+.top-nav .user-email:hover::after {
+  content: attr(data-full);
+  position: absolute;
+  top: 140%;
+  left: 0;
+  white-space: nowrap;
+  background: #222;
+  color: #fff;
+  padding: 5px 8px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  font-size: 0.9rem;
+  z-index: 1001;
+}
+
+/* === Global Site Header (SpendWise Title) === */
+.site-header {
+  width: 100%;
+  text-align: center;
+  margin: 12px 0 6px 0;
+}
+
+.site-title {
+  font-size: 2rem;
+  font-weight: 900;
+  color: #FAF6E9;
+  text-shadow: 2px 2px 8px rgba(250, 246, 233, 0.4);
+  letter-spacing: 1px;
+  margin: 0;
+  cursor: default;
+}
+
+/* subtle hover glow */
+.site-title:hover {
+  text-shadow: 0 0 10px rgba(255,255,255,0.5);
+}
+
+/* responsive scaling */
+@media (max-width: 520px) {
+  .site-title {
+    font-size: 1.5rem;
+  }
+}

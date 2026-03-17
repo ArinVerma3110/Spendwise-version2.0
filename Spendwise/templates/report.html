@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>SpendWise - Report</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="/static/style.css">
+  <style>
+    /* Small page-scoped styles to place filter controls responsively */
+    .filters-wrapper {
+      max-width: 900px;
+      margin: 8px auto 18px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding: 0 12px;
+      box-sizing: border-box;
+    }
+    .filters-left, .filters-right {
+      flex: 1 1 260px;
+      min-width: 160px;
+    }
+    .filters-center {
+      flex: 0 0 100%;
+      text-align: center;
+      margin-top: 8px;
+    }
+    .show-results-btn {
+      display: inline-block;
+      padding: 10px 16px;
+      border-radius: 8px;
+      background-color: #1b8cff;
+      color: #fff;
+      font-weight: 800;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .show-results-btn:hover { transform: translateY(-1px); }
+    .result-box {
+      max-width: 900px;
+      margin: 12px auto;
+      padding: 12px;
+      border-radius: 8px;
+      background: rgba(62,62,62,0.08);
+      color: #FAF6E9;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    @media (max-width: 520px) {
+      .filters-left, .filters-right { flex: 1 1 100%; }
+      .filters-center { margin-top: 6px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <h1 class="site-title">SpendWise</h1>
+  </header>
+
+  <nav class="top-nav">
+    <div class="auth-links">
+      {% if logged_in %}
+        <span class="user-email" data-full="{{ user_email }}">welcome, {{ user_email }}</span> &nbsp;|&nbsp;
+        <a href="/logout" class="auth-link">logout</a>
+      {% else %}
+        <a href="/login" class="auth-link">login</a> / <a href="/signup" class="auth-link">signup</a>
+      {% endif %}
+    </div>
+  </nav>
+
+  <main class="container">
+    <h1 class="webtitle">Your Report</h1>
+
+    <!-- ===== START: Enhanced Filters ===== -->
+    <div class="filters-wrapper" aria-label="Report filters">
+      <div style="flex:1 1 100%; text-align:center; margin-bottom:8px;">
+        <label style="font-weight:800; margin-right:8px;">Select range mode:</label>
+        <select id="rangeMode" style="padding:8px 10px; border-radius:8px;">
+          <option value="rolling" selected>Rolling (last X days)</option>
+          <option value="picker">Pick specific date / week / month / range</option>
+        </select>
+      </div>
+
+      <div id="rollingControls" style="display:flex; gap:12px; width:100%; flex-wrap:wrap; align-items:center; justify-content:center;">
+        <div class="filters-left">
+          <label for="durationSelect" style="font-weight:800; display:block; margin-bottom:6px;">Duration</label>
+          <select id="durationSelect" aria-label="Select duration" style="width:100%; padding:10px; border-radius:8px;">
+            <option value="monthly">Monthly (last 30 days)</option>
+            <option value="weekly">Weekly (last 7 days)</option>
+            <option value="daily">Daily (today)</option>
+          </select>
+        </div>
+
+        <div class="filters-right">
+          <label for="categorySelect" style="font-weight:800; display:block; margin-bottom:6px;">Category</label>
+          <select id="categorySelect" aria-label="Select category" style="width:100%; padding:10px; border-radius:8px;">
+            <option value="all">All expenses</option>
+            <option value="food">food</option>
+            <option value="travel">travel</option>
+            <option value="entertainment">entertainment</option>
+            <option value="healthcare">healthcare</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="pickerControls" style="display:none; gap:12px; width:100%; flex-wrap:wrap; align-items:center; justify-content:center;">
+        <div style="flex:1 1 260px; min-width:160px;">
+          <label for="pickerType" style="font-weight:800; display:block; margin-bottom:6px;">Pick type</label>
+          <select id="pickerType" style="width:100%; padding:10px; border-radius:8px;">
+            <option value="date">Specific date</option>
+            <option value="week">Specific week (pick week start)</option>
+            <option value="month">Specific month</option>
+            <option value="range">Date range</option>
+          </select>
+        </div>
+
+        <div id="pickerInputs" style="flex:1 1 320px; min-width:160px;">
+          <div class="picker-group" id="picker-date" style="display:block;">
+            <label style="font-weight:800; display:block; margin-bottom:6px;">Date</label>
+            <input id="specificDate" type="date" style="width:100%; padding:10px; border-radius:8px;">
+          </div>
+
+          <div class="picker-group" id="picker-week" style="display:none;">
+            <label style="font-weight:800; display:block; margin-bottom:6px;">Week starting (pick Monday)</label>
+            <input id="weekStart" type="date" style="width:100%; padding:10px; border-radius:8px;">
+            <small style="color:#ccc; display:block; margin-top:6px;">End date is start date + 6 days</small>
+          </div>
+
+          <div class="picker-group" id="picker-month" style="display:none;">
+            <label style="font-weight:800; display:block; margin-bottom:6px;">Month</label>
+            <input id="monthPick" type="month" style="width:100%; padding:10px; border-radius:8px;">
+          </div>
+
+          <div class="picker-group" id="picker-range" style="display:none;">
+            <label style="font-weight:800; display:block; margin-bottom:6px;">Start date</label>
+            <input id="rangeStart" type="date" style="width:100%; padding:10px; border-radius:8px; margin-bottom:8px;">
+            <label style="font-weight:800; display:block; margin-bottom:6px;">End date</label>
+            <input id="rangeEnd" type="date" style="width:100%; padding:10px; border-radius:8px;">
+          </div>
+        </div>
+
+        <div style="flex:0 0 220px; min-width:160px;">
+          <label style="font-weight:800; display:block; margin-bottom:6px;">Category</label>
+          <select id="pickerCategory" style="width:100%; padding:10px; border-radius:8px;">
+            <option value="all">All expenses</option>
+            <option value="food">food</option>
+            <option value="travel">travel</option>
+            <option value="entertainment">entertainment</option>
+            <option value="healthcare">healthcare</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="filters-center" style="width:100%; margin-top:10px;">
+        <button id="showResultsBtn" class="show-results-btn" aria-label="Show results">Show results</button>
+      </div>
+    </div>
+
+    <div id="filterResult" class="result-box" style="display:none;"></div>
+
+    <script>
+      // Show/hide rolling vs picker
+      const rangeMode = document.getElementById('rangeMode');
+      const rollingControls = document.getElementById('rollingControls');
+      const pickerControls = document.getElementById('pickerControls');
+      rangeMode.addEventListener('change', (e) => {
+        if (e.target.value === 'rolling') {
+          rollingControls.style.display = 'flex';
+          pickerControls.style.display = 'none';
+        } else {
+          rollingControls.style.display = 'none';
+          pickerControls.style.display = 'flex';
+        }
+      });
+
+      // picker type show/hide inputs
+      const pickerType = document.getElementById('pickerType');
+      const groups = { date: 'picker-date', week: 'picker-week', month: 'picker-month', range: 'picker-range' };
+      function showPickerGroup(type) {
+        Object.values(groups).forEach(id => document.getElementById(id).style.display = 'none');
+        document.getElementById(groups[type]).style.display = 'block';
+      }
+      pickerType.addEventListener('change', (e) => showPickerGroup(e.target.value));
+      showPickerGroup(pickerType.value); // init
+
+      // Helper: format Date object to yyyy-mm-dd
+      function fmtDate(d) {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2,'0');
+        const day = String(d.getDate()).padStart(2,'0');
+        return `${y}-${m}-${day}`;
+      }
+
+      // Ensure we attach only one handler: remove old listeners (defensive)
+      const oldBtn = document.getElementById('showResultsBtn');
+      if (oldBtn) {
+        // Remove any existing click handlers by cloning node (simple safe approach)
+        const newBtn = oldBtn.cloneNode(true);
+        oldBtn.parentNode.replaceChild(newBtn, oldBtn);
+      }
+
+      // Main "Show results" handler (builds start_date & end_date and calls backend)
+      document.getElementById('showResultsBtn').addEventListener('click', async () => {
+        const resultBox = document.getElementById('filterResult');
+        resultBox.style.display = 'block';
+        resultBox.textContent = 'Calculating...';
+
+        let start_date = null, end_date = null, category = null;
+
+        if (rangeMode.value === 'rolling') {
+          const dur = document.getElementById('durationSelect').value;
+          category = document.getElementById('categorySelect').value;
+          const today = new Date();
+          if (dur === 'daily') {
+            start_date = fmtDate(today);
+            end_date = fmtDate(today);
+          } else if (dur === 'weekly') {
+            const start = new Date(today);
+            start.setDate(today.getDate() - 6);
+            start_date = fmtDate(start);
+            end_date = fmtDate(today);
+          } else {
+            const start = new Date(today);
+            start.setDate(today.getDate() - 29);
+            start_date = fmtDate(start);
+            end_date = fmtDate(today);
+          }
+        } else {
+          const pt = document.getElementById('pickerType').value;
+          category = document.getElementById('pickerCategory').value;
+          if (pt === 'date') {
+            const d = document.getElementById('specificDate').value;
+            if (!d) { resultBox.textContent = 'Please pick a date'; return; }
+            start_date = d; end_date = d;
+          } else if (pt === 'week') {
+            const s = document.getElementById('weekStart').value;
+            if (!s) { resultBox.textContent = 'Please pick the week start date'; return; }
+            const start = new Date(s);
+            const end = new Date(start);
+            end.setDate(start.getDate() + 6);
+            start_date = fmtDate(start);
+            end_date = fmtDate(end);
+          } else if (pt === 'month') {
+            const m = document.getElementById('monthPick').value;
+            if (!m) { resultBox.textContent = 'Please pick a month'; return; }
+            const parts = m.split('-');
+            const y = Number(parts[0]), mo = Number(parts[1]) - 1;
+            const start = new Date(y, mo, 1);
+            const end = new Date(y, mo + 1, 0);
+            start_date = fmtDate(start);
+            end_date = fmtDate(end);
+          } else if (pt === 'range') {
+            const s = document.getElementById('rangeStart').value;
+            const e = document.getElementById('rangeEnd').value;
+            if (!s || !e) { resultBox.textContent = 'Please pick both start and end dates'; return; }
+            if (s > e) { resultBox.textContent = 'Start date must be <= end date'; return; }
+            start_date = s; end_date = e;
+          }
+        }
+
+        try {
+          const q = new URL('/report_total', window.location.origin);
+          q.searchParams.set('start_date', start_date);
+          q.searchParams.set('end_date', end_date);
+          q.searchParams.set('category', category);
+
+          const res = await fetch(q.toString(), { method: 'GET', credentials: 'same-origin' });
+          if (!res.ok) {
+            const txt = await res.text().catch(() => 'Error calculating total');
+            resultBox.textContent = txt || 'Error calculating total';
+            return;
+          }
+          const data = await res.json();
+          const totalFormatted = Number(data.total || 0).toFixed(2);
+          const count = data.count || 0;
+          const start = data.period_start || start_date;
+          const end = data.period_end || end_date;
+          const catLabel = (category === 'all') ? 'All categories' : category;
+          resultBox.innerHTML = `<div>Result for <strong>${catLabel}</strong> from <strong>${start}</strong> to <strong>${end}</strong>:</div>
+                                 <div style="font-size:1.4rem; margin-top:8px;">₹ ${totalFormatted} <span style="font-size:0.85rem; color:#ddd;">(${count} entries)</span></div>`;
+        } catch (e) {
+          resultBox.textContent = 'Network error while calculating results.';
+        }
+      });
+    </script>
+    <!-- ===== END: Enhanced Filters ===== -->
+
+    <!-- graph type selector -->
+    <div style="max-width:420px;margin: 0 auto 18px; text-align:center;">
+      <label for="graphType" style="font-weight:800; margin-right:8px;">Graph type:</label>
+      <select id="graphType" aria-label="Choose graph type">
+        <option value="line" selected>Line</option>
+        <option value="bar">Bar</option>
+        <option value="pie">Pie</option>
+      </select>
+    </div>
+
+    {% if combined_plot_line %}
+      <h2>Combined Trend</h2>
+      <div class="combined-graph">
+        <img class="combined-line" src="data:image/png;base64,{{ combined_plot_line }}" alt="Combined Trend (line)" style="max-width:100%;height:auto;">
+        <img class="combined-bar" src="data:image/png;base64,{{ combined_plot_bar }}" alt="Combined Trend (bar)" style="max-width:100%;height:auto; display:none;">
+        <img class="combined-pie" src="data:image/png;base64,{{ combined_plot_pie }}" alt="Combined Trend (pie)" style="max-width:100%;height:auto; display:none;">
+      </div>
+    {% endif %}
+
+    {% if category_plots_line %}
+      <h2>Category-wise Trends</h2>
+      <div id="categoryGraphs">
+        {% for category, img_line in category_plots_line.items() %}
+          <section class="category-block" data-category="{{ category }}">
+            <h3>{{ category }}</h3>
+            <img class="cat-line" src="data:image/png;base64,{{ img_line }}" alt="{{ category }} trend (line)" style="max-width:100%;height:auto;">
+            <img class="cat-bar" src="data:image/png;base64,{{ category_plots_bar[category] }}" alt="{{ category }} trend (bar)" style="max-width:100%;height:auto; display:none;">
+            <img class="cat-pie" src="data:image/png;base64,{{ category_plots_pie[category] }}" alt="{{ category }} trend (pie)" style="max-width:100%;height:auto; display:none;">
+          </section>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% if not combined_plot_line and (not category_plots_line or category_plots_line|length == 0) %}
+      <p>You don't have any expenses yet. </p>
+    {% endif %}
+
+    <div style="margin-top:18px;">
+      <a class="view-report-btn" href="/index">Add More Expenses</a>
+      <button id="predictBtn" class="view-report-btn">Predict</button>
+    </div>
+
+    <div id="predictions" style="margin-top:18px;"></div>
+  </main>
+
+  <script>
+    // Graph type toggle
+    const graphSelect = document.getElementById('graphType');
+    function setGraphType(type) {
+      document.querySelectorAll('.combined-line').forEach(el => el.style.display = (type === 'line') ? '' : 'none');
+      document.querySelectorAll('.combined-bar').forEach(el => el.style.display = (type === 'bar') ? '' : 'none');
+      document.querySelectorAll('.combined-pie').forEach(el => el.style.display = (type === 'pie') ? '' : 'none');
+      document.querySelectorAll('.cat-line').forEach(el => el.style.display = (type === 'line') ? '' : 'none');
+      document.querySelectorAll('.cat-bar').forEach(el => el.style.display = (type === 'bar') ? '' : 'none');
+      document.querySelectorAll('.cat-pie').forEach(el => el.style.display = (type === 'pie') ? '' : 'none');
+      document.querySelectorAll('.pred-line').forEach(el => el.style.display = (type === 'line') ? '' : 'none');
+      document.querySelectorAll('.pred-bar').forEach(el => el.style.display = (type === 'bar') ? '' : 'none');
+      document.querySelectorAll('.pred-pie').forEach(el => el.style.display = (type === 'pie') ? '' : 'none');
+    }
+    graphSelect.addEventListener('change', (e) => setGraphType(e.target.value));
+    setGraphType(graphSelect.value);
+
+    // Prediction fetch (unchanged)
+    document.getElementById('predictBtn').addEventListener('click', async () => {
+      const container = document.getElementById('predictions');
+      container.innerHTML = '<p>Loading predictions...</p>';
+      try {
+        const res = await fetch('/predict');
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          container.innerHTML = '<p>'+ (err.error||'Prediction error') +'</p>';
+          return;
+        }
+        const data = await res.json();
+        container.innerHTML = '';
+        const selectedType = document.getElementById('graphType').value || 'line';
+        for (const [cat, payload] of Object.entries(data)) {
+          const block = document.createElement('div');
+          block.className = 'prediction-block';
+          block.style.marginBottom = '18px';
+          block.innerHTML = `<h4>${cat}</h4>`;
+          if (payload.error) {
+            block.innerHTML += `<p>${payload.error}</p>`;
+          } else {
+            const lineImg = payload.line || payload.image_base64 || null;
+            const barImg  = payload.bar  || null;
+            const pieImg  = payload.pie  || null;
+            if (lineImg) {
+              const imgLine = document.createElement('img');
+              imgLine.className = 'pred-line';
+              imgLine.src = 'data:image/png;base64,' + lineImg;
+              imgLine.style.maxWidth = '100%';
+              imgLine.style.height = 'auto';
+              imgLine.style.display = (selectedType === 'line') ? '' : 'none';
+              block.appendChild(imgLine);
+            }
+            if (barImg) {
+              const imgBar = document.createElement('img');
+              imgBar.className = 'pred-bar';
+              imgBar.src = 'data:image/png;base64,' + barImg;
+              imgBar.style.maxWidth = '100%';
+              imgBar.style.height = 'auto';
+              imgBar.style.display = (selectedType === 'bar') ? '' : 'none';
+              block.appendChild(imgBar);
+            }
+            if (pieImg) {
+              const imgPie = document.createElement('img');
+              imgPie.className = 'pred-pie';
+              imgPie.src = 'data:image/png;base64,' + pieImg;
+              imgPie.style.maxWidth = '100%';
+              imgPie.style.height = 'auto';
+              imgPie.style.display = (selectedType === 'pie') ? '' : 'none';
+              block.appendChild(imgPie);
+            }
+            if (!lineImg && !barImg && !pieImg && typeof payload === 'string') {
+              const fallback = document.createElement('img');
+              fallback.src = 'data:image/png;base64,' + payload;
+              fallback.style.maxWidth = '100%';
+              fallback.style.height = 'auto';
+              block.appendChild(fallback);
+            }
+          }
+          container.appendChild(block);
+        }
+      } catch (e) {
+        container.innerHTML = '<p>Network error while fetching predictions.</p>';
+      }
+    });
+  </script>
+</body>
+</html>
